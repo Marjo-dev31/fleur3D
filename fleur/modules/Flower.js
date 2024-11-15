@@ -1,4 +1,5 @@
 import * as THREE from "three";
+import { OrbitControls } from "three/addons/controls/OrbitControls.js";
 
 class Flower {
    constructor() {
@@ -13,6 +14,7 @@ class Flower {
       this.createScene();
       this.createCamera();
       this.createRender();
+      this.createOrbitControls();
       this.createCube();
       this.animate();
    }
@@ -24,6 +26,7 @@ class Flower {
 
    createCamera() {
       const aspectRatio = this.canvasWidth / this.canvasHeight;
+    
       this.camera = new THREE.PerspectiveCamera(
          75,
          aspectRatio,
@@ -31,6 +34,13 @@ class Flower {
          1000
       );
       this.camera.position.z = 5;
+   }
+
+   createOrbitControls() {
+    this.controls = new OrbitControls(
+        this.camera,
+        this.renderer.domElement
+     );
    }
 
    createRender() {
@@ -50,10 +60,11 @@ class Flower {
    }
 
    animate() {
-    requestAnimationFrame(this.animate.bind(this))
-    this.cube.rotation.x += 0.01
-    this.cube.rotation.y += 0.01
-    this.renderer.render(this.scene, this.camera);
+      requestAnimationFrame(this.animate.bind(this));
+      this.cube.rotation.x += 0.01;
+      this.cube.rotation.y += 0.01;
+      this.controls.update();
+      this.renderer.render(this.scene, this.camera);
    }
 }
 
