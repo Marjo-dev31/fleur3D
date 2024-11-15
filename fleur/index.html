@@ -1,0 +1,45 @@
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ma fleur en 3D</title>
+    <style>
+        *{
+            margin: 0;
+            padding:0;
+        }
+        .canvas{
+            position:absolute;
+            top: 0;
+            left: 0;
+            z-index: 0;
+        }
+        .form{
+            display: flex;
+            justify-content: center;
+            position: relative;
+            margin-top: 4rem;
+            z-index: 1;
+
+        }
+    </style>
+</head>
+<body>
+    <div class="canvas js-canvas"></div>
+    <form class="form js-search-form">
+        <label>
+            Tapez le nom d'une ville:
+            <input type="text" class="js-search-input">
+        </label>
+        <button type="submit" >Valider</button>
+    </form>
+    <script type="importmap">
+        {
+           "imports": {
+              "three": "https://cdn.jsdelivr.net/npm/three@0.170.0/build/three.module.js"
+           }
+        }
+     </script>
+    <script src="app.js" type="module"></script>
+</body>
+</html>

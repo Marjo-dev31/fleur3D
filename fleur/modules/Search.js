@@ -1,4 +1,4 @@
-import { Wind } from '../modules/Wind.js'
+import { Wind } from './Wind.js'
 
 class Search {
    constructor() {
@@ -37,7 +37,7 @@ class Search {
    }
 
    getCities() {
-      fetch("../data/french-cities.json")
+      fetch("../fleur/data/french-cities.json")
          .then((response) => response.json())
          .then((data) => {
             this.cities = data;
