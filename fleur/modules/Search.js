@@ -28,7 +28,7 @@ class Search {
       if(cityData) {
         const lat = cityData.lat
         const long = cityData.lng
-        console.log(lat,long)
+        window.app.city = name
         new Wind({lat, long})
       } else {
         alert('La ville renseignée n\'existe pas!')

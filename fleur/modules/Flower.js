@@ -14,11 +14,18 @@ class Flower {
       this.createScene();
       this.createCamera();
       this.createRender();
-      this.createOrbitControls();
 
+      this.createGroupObject();
       this.createStem();
       this.createPistil();
       this.createPetals();
+      this.createAxis();
+      this.createNorth();
+
+      this.createOrbitControls();
+      // this.createHelper();
+
+      this.addGroupToScene();
 
       this.animate();
    }
@@ -37,9 +44,9 @@ class Flower {
          0.1,
          1000
       );
-      this.camera.position.z = 100;
+      this.camera.position.z = 250;
       this.camera.position.x = 0;
-      this.camera.position.y = 0;
+      this.camera.position.y = 200;
    }
 
    createOrbitControls() {
@@ -49,10 +56,19 @@ class Flower {
       );
    }
 
+   createHelper() {
+      const axesHelper = new THREE.AxesHelper(100);
+      this.scene.add(axesHelper);
+   }
+
    createRender() {
       this.renderer = new THREE.WebGLRenderer();
       this.renderer.setSize(this.canvasWidth, this.canvasHeight);
       this.canvas.appendChild(this.renderer.domElement);
+   }
+
+   createGroupObject() {
+      this.group = new THREE.Group();
    }
 
    createStem() {
@@ -66,7 +82,8 @@ class Flower {
       const color = new THREE.Color("rgb(0, 255, 0)");
       const material = new THREE.MeshBasicMaterial({ color: color });
       const cylinder = new THREE.Mesh(geometry, material);
-      this.scene.add(cylinder);
+      cylinder.position.y = this.stemHeight / 2;
+      this.group.add(cylinder);
    }
 
    createPistil() {
@@ -75,8 +92,8 @@ class Flower {
          color: 0xffff00,
       });
       const sphere = new THREE.Mesh(geometry, material);
-      sphere.position.y = this.stemHeight / 2;
-      this.scene.add(sphere);
+      sphere.position.y = this.stemHeight;
+      this.group.add(sphere);
    }
 
    createPetals() {
@@ -85,26 +102,64 @@ class Flower {
       const material = new THREE.MeshBasicMaterial({
          color: color,
       });
-      const positionsX = [-5, 0, 5, 0]
-      const positionsZ = [0, -5, 0, 5]
-      const rotationsY = [-30, -5, 30, 0]
-      const rotationsX = [90, 120, 90, 60]
+      const positionsX = [-5, 0, 5, 0];
+      const positionsZ = [0, -5, 0, 5];
+      const rotationsY = [-30, -5, 30, 0];
+      const rotationsX = [90, 120, 90, 60];
       for (let i = 0; i < 4; i++) {
-const torus = new THREE.Mesh(geometry, material);
-      torus.position.y = this.stemHeight / 2;
-      torus.rotation.x = THREE.MathUtils.degToRad(rotationsX[i]);
-      torus.position.x = positionsX[i];
-      torus.position.z = positionsZ[i];
-      torus.rotation.y = THREE.MathUtils.degToRad(rotationsY[i]);
-      this.scene.add(torus);
+         const torus = new THREE.Mesh(geometry, material);
+         torus.position.y = this.stemHeight;
+         torus.rotation.x = THREE.MathUtils.degToRad(rotationsX[i]);
+         torus.position.x = positionsX[i];
+         torus.position.z = positionsZ[i];
+         torus.rotation.y = THREE.MathUtils.degToRad(rotationsY[i]);
+         this.group.add(torus);
       }
+   }
 
-      
+   createAxis() {
+      const geometry = new THREE.TorusGeometry(40, 1, 16, 100);
+      const color = new THREE.Color(0, 0, 0);
+      const material = new THREE.MeshBasicMaterial({
+         color: color,
+      });
+      const torus = new THREE.Mesh(geometry, material);
+      torus.rotation.x = THREE.MathUtils.degToRad(90);
+      this.scene.add(torus);
+   }
+
+   createNorth() {
+      const geometry = new THREE.CylinderGeometry(0, 5, 20, 32);
+      const material = new THREE.MeshBasicMaterial({
+         color: "orange",
+      });
+      const cylinder = new THREE.Mesh(geometry, material);
+      cylinder.position.z = -30;
+      cylinder.rotation.x = THREE.MathUtils.degToRad(270);
+      this.scene.add(cylinder);
+   }
+
+   addGroupToScene() {
+      this.scene.add(this.group);
    }
 
    animate() {
       requestAnimationFrame(this.animate.bind(this));
       this.controls.update();
+
+      if (window.app.city === "") {
+         this.group.rotation.y += 0.01;
+      } else {
+         const windSpeedDeg = THREE.MathUtils.degToRad(
+            window.app.windSpeed * 2
+         );
+         if (this.group.rotation.z < windSpeedDeg)
+            this.group.rotation.z += 0.01 * windSpeedDeg;
+         this.group.rotation.y = THREE.MathUtils.degToRad(
+            270 - window.app.windDirection
+         );
+      }
+
       this.renderer.render(this.scene, this.camera);
    }
 }
